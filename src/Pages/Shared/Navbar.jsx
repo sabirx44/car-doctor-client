@@ -1,22 +1,30 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../providers/AuthProvider";
+import { AuthContext } from "../../AuthProvider";
 
 // Separate NavLinks component
-const NavLinks = () => (
+const NavLinks = ({ user }) => (
     <>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/about">About</Link></li>
         <li><Link to="/services">Services</Link></li>
+        {user?.email && (
+            <li>
+                <Link to="/bookings">My bookings</Link>
+            </li>
+        )}
     </>
 );
 
 const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
-    const handleLogout = () => {
-        logout()
-            .then(() => { })
-            .catch(error => console.error(error))
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
@@ -29,21 +37,22 @@ const Navbar = () => {
                         </svg>
                     </button>
                     <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-                        <NavLinks />
+                        <NavLinks user={user} />
                     </ul>
                 </div>
                 <a className="text-xl">daisyUI</a>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
-                    <NavLinks />
+                    <NavLinks user={user} />
                 </ul>
             </div>
             <div className="navbar-end">
-                {
-                    user?.email ? <Link onClick={handleLogout} className="btn">Logout</Link>
-                        : <Link to="/login" className="btn">Login</Link>
-                }
+                {user?.email ? (
+                    <button onClick={handleLogout} className="btn">Logout</button>
+                ) : (
+                    <Link to="/login" className="btn">Login</Link>
+                )}
             </div>
         </div>
     );

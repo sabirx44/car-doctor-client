@@ -1,16 +1,16 @@
 import { useContext, useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import { AuthContext } from "../providers/AuthProvider";
+import { AuthContext } from "../AuthProvider";
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
-const Checkout = () => {
+const BookService = () => {
     const services = useLoaderData();
     const { service_id, title, img, price } = services;
     const { user } = useContext(AuthContext);
     const [phone, setPhone] = useState();
 
-    const handleBooking = (e) => {
+    const handleBookedService = (e) => {
         e.preventDefault();
         const form = e.target;
         const name = form.name.value;
@@ -39,7 +39,7 @@ const Checkout = () => {
             .then(res => res.json())
             .then(data => {
                 console.log(data)
-                if (data.insertedId){
+                if (data.insertedId) {
                     alert("Service booked successfully!")
                 }
             });
@@ -48,7 +48,7 @@ const Checkout = () => {
     return (
         <div>
             <h2 className="text-5xl mb-6">Book Service: {title}</h2>
-            <form className="card-body" onSubmit={handleBooking}>
+            <form className="card-body" onSubmit={handleBookedService}>
                 <div className="form-control">
                     <label className="label">
                         <span className="label-text">Name</span>
@@ -110,4 +110,4 @@ const Checkout = () => {
     );
 };
 
-export default Checkout;
+export default BookService;
