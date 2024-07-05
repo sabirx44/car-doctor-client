@@ -33,6 +33,27 @@ const Booking = () => {
         }
     }
 
+    const handleApprove = id => {
+        fetch(`http://localhost:5000/bookings/${id}`, {
+            method: 'PATCH',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({ status: 'Approved' })
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.modifiedCount > 0) {
+                    const remaining = bookings.filter(booking => booking._id !== id);
+                    const updated = bookings.find(booking => booking._id === id);
+                    updated.status = 'Approved'
+                    const newBookings = [updated, ...remaining];
+                    setBookings(newBookings);
+                }
+            })
+    }
+
     return (
         <div className="overflow-x-auto">
             <table className="table">
@@ -49,7 +70,7 @@ const Booking = () => {
                 </thead>
                 <tbody>
                     {
-                        bookings.map(booking => <BookingRow key={booking._id} booking={booking} handleDelete={handleDelete} />)
+                        bookings.map(booking => <BookingRow key={booking._id} booking={booking} handleDelete={handleDelete} handleApprove={handleApprove} />)
                     }
                 </tbody>
             </table>
