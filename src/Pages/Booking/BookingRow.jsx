@@ -1,4 +1,3 @@
-
 const BookingRow = ({ booking, handleDelete, handleApprove }) => {
     const { _id, title, img, price, name, email, date, status } = booking;
 
