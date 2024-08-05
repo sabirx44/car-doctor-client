@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../AuthProvider";
 import BookingRow from "./BookingRow";
+import axios from "axios";
 
 const Booking = () => {
   // Get user from AuthContext
@@ -9,19 +10,17 @@ const Booking = () => {
   const [bookings, setBookings] = useState([]);
 
   // Fetch bookings when component mounts or user email changes
+  const url = `http://localhost:5000/bookings?email=${user?.email}`;
   useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/bookings?email=${user.email}`);
-        const data = await response.json();
-        setBookings(data);
-      } catch (error) {
-        console.error('Error fetching bookings:', error);
-      }
-    };
+    axios.get(url, { withCredentials: true })
+      .then(res => {
+        setBookings(res.data);
+      })
 
-    fetchBookings();
-  }, [user.email]);
+    // fetch(url)
+    //     .then(res => res.json())
+    //     .then(data => setBookings(data))
+  }, [url]);
 
   // Handle booking deletion
   const handleDelete = async (id) => {
@@ -31,7 +30,7 @@ const Booking = () => {
           method: 'DELETE'
         });
         const data = await response.json();
-        
+
         if (data.deletedCount > 0) {
           alert('Deleted successfully!');
           setBookings(bookings.filter(booking => booking._id !== id));
@@ -53,9 +52,9 @@ const Booking = () => {
         body: JSON.stringify({ status: 'Approved' })
       });
       const data = await response.json();
-      
+
       if (data.modifiedCount > 0) {
-        const updatedBookings = bookings.map(booking => 
+        const updatedBookings = bookings.map(booking =>
           booking._id === id ? { ...booking, status: 'Approved' } : booking
         );
         setBookings(updatedBookings);
@@ -80,11 +79,11 @@ const Booking = () => {
         </thead>
         <tbody>
           {bookings.map(booking => (
-            <BookingRow 
-              key={booking._id} 
-              booking={booking} 
-              handleDelete={handleDelete} 
-              handleApprove={handleApprove} 
+            <BookingRow
+              key={booking._id}
+              booking={booking}
+              handleDelete={handleDelete}
+              handleApprove={handleApprove}
             />
           ))}
         </tbody>
