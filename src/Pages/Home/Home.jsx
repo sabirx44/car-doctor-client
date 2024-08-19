@@ -4,7 +4,7 @@ import Services from "./Services/Services";
 
 const Home = () => {
     return (
-        <div>
+        <div className="px-24">
             <Banner />
             <About />
             <Services />
